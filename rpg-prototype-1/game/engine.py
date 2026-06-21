@@ -13,6 +13,18 @@ def default_camera_settings():
     camera.orthographic = True
     camera.fov = zoom_level
 
+#Defining binding functions
+def quit(state):
+    application.quit()
+
+def printhello(state):
+    print("Hello")
+
+default_bindings = {
+        'escape': quit,
+        'g' : printhello
+        }
+
 def global_new():
     default_camera_settings()
     #default level ^
@@ -32,8 +44,8 @@ def _default_new(self):
     Light = PointLight(y=10)
     Light.color = color.white
 
-    room = self.Entity(model='temp_room.obj', color=color.gray, z=-5)
-    cube = self.Entity(model='cube', name='cube', color=color.orange, z=-9, y=-1.7)
+    room = self.addEntity(model='temp_room.obj', color=color.gray, z=-5)
+    cube = self.addEntity(model='cube', name='cube', color=color.orange, z=-9, y=-1.7)
 
     #EditorCamera()
 
@@ -50,7 +62,7 @@ class state:
         else:
             self.collection.insert(0, instanced_ent)
 
-    def Entity(self, **kwargs):
+    def addEntity(self, **kwargs):
         name = kwargs.pop('name', f"entity{len(self.workspace)}")
         parent = kwargs.get('parent', None)
 
@@ -59,7 +71,18 @@ class state:
 
         return ent
 
-    def Text(self, **kwargs):
+    def addBind(self, key, function):
+        existing = self.bindings.get(key)
+        if existing:
+            self.past_bindings[key] = existing
+
+        self.bindings[key] = function
+
+    def addBinds(self, binds):
+        for key, v in binds.items():
+            self.addBind(key, v)
+
+    def addText(self, **kwargs):
         name = kwargs.pop('name', f"entity{len(self.workspace)}")
         parent = kwargs.get('parent', camera.ui)
 
@@ -73,7 +96,7 @@ class state:
         self.name = kwargs.pop('name', f"classno{state.classnum}")
         new = kwargs.pop('new', _default_new)
         update = kwargs.pop('update')
-        input = kwargs.pop('input')
+        bindings = kwargs.pop('bindings')
 
         def wrapped_new(manager):
             global_new()
@@ -92,20 +115,23 @@ class state:
             global_update()
             update(self)
 
-        def wrapped_input(key):
-            global_input(key)
-            input(self, key)
-
-        self.input = wrapped_input
         self.new = wrapped_new
         self.update = wrapped_update
 
         self.workspace = {}
         self.collection = []
         self.ui = {}
+        self.bindings = {}
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        for key, v in default_bindings.items():
+            self.bindings[key] = v
+
+        if bindings:
+            for key, v in bindings.items():
+                self.bindings[key] = v
 
         state.classnum += 1
 
@@ -121,6 +147,16 @@ class state:
 
         self.workspace = {}
         self.ui = {}
+
+    def input(self, key):
+        #print(key)
+        ## debug above
+
+        function = self.bindings.get(key)
+        if not function:
+            return
+
+        function(self)
 
 ##State Manager
 class stateman:

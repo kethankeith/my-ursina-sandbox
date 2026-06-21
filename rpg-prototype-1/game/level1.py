@@ -1,20 +1,10 @@
 from ursina import *
 from game.engine import state
-
-def Player(self):
-    lplr = self.Entity(
-            name='player',
-            model='quad',
-            color=color.green,
-            position=(-0.3, 0, 0),
-            scale=0.3
-            )
-    
-    return Player
+from game.player import Player
 
 def on_new_scene(self):
-    plr = Player(self)
-    quadc = self.Entity(
+    plr = Player(self, Vec3(-0.3, 0, 0))
+    quadc = self.addEntity(
                         name='quadtocompare',
                         model='quad',
                         position=(0.3, 0, 1))
@@ -22,13 +12,16 @@ def on_new_scene(self):
 def scene_on_update(self):
     value = 1
 
-def scene_input(self, key):
-    if key == 'left arrow':
-        print("Left Arrow Pressed")
+def left_pressed(state):
+    print("Left Arrow Pressed")
+
+scene_bindings = {
+        'left arrow': left_pressed
+        }
 
 level1 = state(
         name = "level1",
         update=scene_on_update,
         new=on_new_scene,
-        input=scene_input,
+        bindings=scene_bindings,
         )
