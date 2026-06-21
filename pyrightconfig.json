@@ -1,0 +1,11 @@
+{
+  "typeCheckingMode": "basic",
+  "reportMissingTypeStubs": false,
+  "reportUnknownParameterType": false,
+  "reportUnknownVariableType": false,
+  "reportArgumentType": false,
+  "reportAttributeAccessIssue": false,
+  "reportWildcardImportFromLibrary": false,
+  "reportOptionalMemberAccess": false,
+  "reportIndexIssue": false
+}
