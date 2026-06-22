@@ -1,11 +1,6 @@
 import builtins
 from ursina import *
 
-from ursina import vec3
-from ursina import shader
-from ursina.color import rgba32
-from ursina.shaders import lit_with_shadows_shader
-
 zoom_level = 5
 
 #camera settings
@@ -122,6 +117,7 @@ class state:
         self.collection = []
         self.ui = {}
         self.bindings = {}
+        self.past_bindings = {}
 
         for key, value in kwargs.items():
             setattr(self, key, value)

@@ -29,10 +29,10 @@ def input(key):
     max_lvl = len(levels)
     current = levels.index(engine.current_state) + 1
 
-    if key == 'left arrow':
+    if key == 'page up':
         current = (current % max_lvl)
         engine.change_state(levels[current])
-    if key == 'right arrow':
+    if key == 'page down':
         current = ((current - 2) % max_lvl)
         engine.change_state(levels[current])
 
